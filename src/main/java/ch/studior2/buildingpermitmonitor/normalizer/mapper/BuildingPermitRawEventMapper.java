@@ -3,11 +3,12 @@ package ch.studior2.buildingpermitmonitor.normalizer.mapper;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitNormalizedEvent;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitRawEvent;
 import ch.studior2.buildingpermitmonitor.contracts.model.BuildingPermitStatus;
-import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BuildingPermitRawEventMapper {
+
+  private static final String SOURCE = "kt-zh";
 
   private final BuildingPermitCategoryClassifier classifier;
 
@@ -16,29 +17,38 @@ public class BuildingPermitRawEventMapper {
   }
 
   public BuildingPermitNormalizedEvent map(BuildingPermitRawEvent rawEvent) {
-    Map<String, String> payload = rawEvent.payload();
-
-    String municipality =
-        firstNonBlank(
-            payload.get("gemeinde"), payload.get("Gemeinde"), payload.get("municipality"));
-    String description =
-        firstNonBlank(
-            payload.get("bauvorhaben"), payload.get("Bauvorhaben"), payload.get("description"));
-    String address =
-        firstNonBlank(payload.get("adresse"), payload.get("Adresse"), payload.get("address"));
-    String permitId = rawEvent.source() + ":" + rawEvent.externalId();
+    String description = rawEvent.projectDescription();
+    String address = formatAddress(rawEvent);
 
     return new BuildingPermitNormalizedEvent(
-        permitId,
-        rawEvent.source(),
+        rawEvent.externalId(),
+        SOURCE,
         rawEvent.externalId(),
         shorten(description, 120),
         description,
         classifier.classify(description).name(),
         BuildingPermitStatus.SUBMITTED.name(),
-        municipality,
-        null,
+        rawEvent.municipalityName(),
+        rawEvent.publicationDate(),
         address);
+  }
+
+  private String formatAddress(BuildingPermitRawEvent rawEvent) {
+    return firstNonBlank(
+        joinAddressParts(
+            rawEvent.projectLocationAddressStreet(),
+            rawEvent.projectLocationAddressHouseNumber(),
+            rawEvent.projectLocationAddressSwissZipCode(),
+            rawEvent.projectLocationAddressTown()));
+  }
+
+  private String joinAddressParts(String street, String houseNumber, Integer zipCode, String town) {
+    String streetAndHouseNumber = joinNonBlank(" ", street, houseNumber);
+
+    String zipCodeAndTown =
+        joinNonBlank(" ", zipCode == null ? null : String.valueOf(zipCode), town);
+
+    return joinNonBlank(", ", streetAndHouseNumber, zipCodeAndTown);
   }
 
   private String firstNonBlank(String... values) {
@@ -48,6 +58,21 @@ public class BuildingPermitRawEventMapper {
       }
     }
     return null;
+  }
+
+  private String joinNonBlank(String delimiter, String... values) {
+    StringBuilder result = new StringBuilder();
+
+    for (String value : values) {
+      if (value != null && !value.isBlank()) {
+        if (!result.isEmpty()) {
+          result.append(delimiter);
+        }
+        result.append(value.trim());
+      }
+    }
+
+    return result.isEmpty() ? null : result.toString();
   }
 
   private String shorten(String value, int maxLength) {

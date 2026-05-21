@@ -2,6 +2,7 @@ package ch.studior2.buildingpermitmonitor.normalizer.service;
 
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitNormalizedEvent;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitRawEvent;
+import ch.studior2.buildingpermitmonitor.contracts.group.KafkaGroupIDs;
 import ch.studior2.buildingpermitmonitor.contracts.topic.KafkaTopics;
 import ch.studior2.buildingpermitmonitor.normalizer.mapper.BuildingPermitRawEventMapper;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,7 +22,7 @@ public class BuildingPermitNormalizer {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  @KafkaListener(topics = KafkaTopics.RAW, groupId = "normalizer")
+  @KafkaListener(topics = KafkaTopics.RAW, groupId = KafkaGroupIDs.NORMALIZER)
   public void normalize(BuildingPermitRawEvent rawEvent) {
     BuildingPermitNormalizedEvent normalizedEvent = mapper.map(rawEvent);
     kafkaTemplate.send(KafkaTopics.NORMALIZED, normalizedEvent.permitId(), normalizedEvent);
