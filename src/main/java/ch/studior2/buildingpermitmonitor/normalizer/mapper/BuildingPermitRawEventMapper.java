@@ -24,7 +24,7 @@ public class BuildingPermitRawEventMapper {
         rawEvent.externalId(),
         SOURCE,
         rawEvent.externalId(),
-        shorten(description, 120),
+        shorten(description, 200),
         description,
         classifier.classify(description).name(),
         BuildingPermitStatus.SUBMITTED.name(),
