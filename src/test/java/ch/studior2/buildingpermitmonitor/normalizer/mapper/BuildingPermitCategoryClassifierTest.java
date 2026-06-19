@@ -33,10 +33,28 @@ class BuildingPermitCategoryClassifierTest {
       return Stream.of(
           arguments(
               named("neubau", "Neubau Mehrfamilienhaus"), BuildingPermitCategory.NEW_BUILDING),
+          arguments(
+              named("neubau (lowercase)", "neubau einfamilienhaus"),
+              BuildingPermitCategory.NEW_BUILDING),
           arguments(named("umbau", "Umbau bestehende Wohnung"), BuildingPermitCategory.RENOVATION),
+          arguments(
+              named("umbau (lowercase)", "umbau bürogebäude"), BuildingPermitCategory.RENOVATION),
           arguments(named("rückbau", "Rückbau Garage"), BuildingPermitCategory.DEMOLITION),
+          arguments(
+              named("rückbau (lowercase)", "rückbau lagerhalle"),
+              BuildingPermitCategory.DEMOLITION),
           arguments(named("sanierung", "Sanierung Dach"), BuildingPermitCategory.REFURBISHMENT),
-          arguments(named("blank", " "), BuildingPermitCategory.UNKNOWN));
+          arguments(
+              named("sanierung (lowercase)", "sanierung fassade"),
+              BuildingPermitCategory.REFURBISHMENT),
+          arguments(
+              named("nutzungsänderung", "Nutzungsänderung Büro zu Wohnen"),
+              BuildingPermitCategory.OTHER),
+          arguments(
+              named("nutzungsänderung (lowercase)", "nutzungsänderung lager zu wohnung"),
+              BuildingPermitCategory.OTHER),
+          arguments(named("blank", " "), BuildingPermitCategory.UNKNOWN),
+          arguments(named("unmatched", "Bauzaun-Bewilligung"), BuildingPermitCategory.UNKNOWN));
     }
   }
 }
