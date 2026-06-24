@@ -7,20 +7,15 @@ public class BuildingPermitCategoryClassifier {
     if (projectDescription == null || projectDescription.trim().isEmpty()) {
       return BuildingPermitCategory.UNKNOWN;
     }
-    String desc = projectDescription.toLowerCase().trim();
+    String description = projectDescription.toLowerCase().trim();
 
-    if (desc.contains("neubau")) {
-      return BuildingPermitCategory.NEW_BUILDING;
-    } else if (desc.contains("umbau")) {
-      return BuildingPermitCategory.RENOVATION;
-    } else if (desc.contains("rückbau")) {
-      return BuildingPermitCategory.DEMOLITION;
-    } else if (desc.contains("sanierung")) {
-      return BuildingPermitCategory.REFURBISHMENT;
-    } else if (desc.contains("nutzungsänderung")) {
-      return BuildingPermitCategory.OTHER;
-    } else {
-      return BuildingPermitCategory.UNKNOWN;
-    }
+    return switch (description) {
+      case String d when d.contains("neubau") -> BuildingPermitCategory.NEW_BUILDING;
+      case String d when d.contains("umbau") -> BuildingPermitCategory.RENOVATION;
+      case String d when d.contains("rückbau") -> BuildingPermitCategory.DEMOLITION;
+      case String d when d.contains("sanierung") -> BuildingPermitCategory.REFURBISHMENT;
+      case String d when d.contains("nutzungsänderung") -> BuildingPermitCategory.OTHER;
+      default -> BuildingPermitCategory.UNKNOWN;
+    };
   }
 }

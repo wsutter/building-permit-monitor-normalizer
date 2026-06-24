@@ -18,7 +18,7 @@ class BuildingPermitRawEventMapperTest {
   @Test
   @DisplayName("should produce a non-null address and municipality from populated source fields")
   void shouldProduceAddressAndMunicipality() {
-    BuildingPermitNormalizedEvent normalized = mapper.map(rawEventWithAddress());
+    BuildingPermitNormalizedEvent normalized = mapper.map(rawEventWithAddress("Eingereicht"));
 
     assertThat(normalized.municipality()).isEqualTo("Thalwil");
     assertThat(normalized.address()).isEqualTo("Eisenbahnstrasse 27, 8800 Thalwil");
@@ -26,11 +26,19 @@ class BuildingPermitRawEventMapperTest {
     assertThat(normalized.source()).isEqualTo("kt-zh");
     assertThat(normalized.category()).isEqualTo("RENOVATION");
     assertThat(normalized.publishedDate()).isEqualTo(LocalDate.of(2026, 5, 17));
+    assertThat(normalized.status()).isEqualTo("UNKNOWN");
+  }
+
+  @Test
+  @DisplayName("should default status field to UNKNOWN")
+  void shouldDefaultStatusField() {
+    BuildingPermitNormalizedEvent normalized = mapper.map(rawEventWithAddress(null));
+    assertThat(normalized.status()).isEqualTo("UNKNOWN");
   }
 
   // Raw event with the fields the mapper consumes populated (as the fixed binding now delivers),
   // everything else null. Positions follow the BuildingPermitRawEvent record component order.
-  private static BuildingPermitRawEvent rawEventWithAddress() {
+  private static BuildingPermitRawEvent rawEventWithAddress(String status) {
     return new BuildingPermitRawEvent(
         "00002982", // id
         "00006183", // publicationNumber
