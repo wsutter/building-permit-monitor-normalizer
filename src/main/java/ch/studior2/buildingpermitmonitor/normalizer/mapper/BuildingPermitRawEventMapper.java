@@ -2,6 +2,7 @@ package ch.studior2.buildingpermitmonitor.normalizer.mapper;
 
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitNormalizedEvent;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitRawEvent;
+import ch.studior2.buildingpermitmonitor.normalizer.address.AddressComposer;
 import ch.studior2.buildingpermitmonitor.normalizer.classification.BuildingPermitCategoryClassifier;
 import ch.studior2.buildingpermitmonitor.normalizer.classification.BuildingPermitStatusNormalizer;
 import org.springframework.stereotype.Component;
@@ -32,12 +33,13 @@ public class BuildingPermitRawEventMapper {
   }
 
   private String formatAddress(BuildingPermitRawEvent rawEvent) {
-    return firstNonBlank(
-        joinAddressParts(
-            rawEvent.projectLocationAddressStreet(),
-            rawEvent.projectLocationAddressHouseNumber(),
-            rawEvent.projectLocationAddressSwissZipCode(),
-            rawEvent.projectLocationAddressTown()));
+    return AddressComposer.compose(
+        rawEvent.projectLocationAddressStreet(),
+        rawEvent.projectLocationAddressHouseNumber(),
+        rawEvent.projectLocationAddressSwissZipCode() != null
+            ? String.valueOf(rawEvent.projectLocationAddressSwissZipCode())
+            : null,
+        rawEvent.projectLocationAddressTown());
   }
 
   private String joinAddressParts(String street, String houseNumber, Integer zipCode, String town) {
