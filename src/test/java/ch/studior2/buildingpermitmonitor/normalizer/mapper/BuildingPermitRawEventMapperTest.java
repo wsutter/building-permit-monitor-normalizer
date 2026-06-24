@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitNormalizedEvent;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitRawEvent;
+import ch.studior2.buildingpermitmonitor.normalizer.classification.BuildingPermitCategoryClassifier;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

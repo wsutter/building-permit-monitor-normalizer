@@ -3,6 +3,7 @@ package ch.studior2.buildingpermitmonitor.normalizer.mapper;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitNormalizedEvent;
 import ch.studior2.buildingpermitmonitor.contracts.event.BuildingPermitRawEvent;
 import ch.studior2.buildingpermitmonitor.contracts.model.BuildingPermitStatus;
+import ch.studior2.buildingpermitmonitor.normalizer.classification.BuildingPermitCategoryClassifier;
 import org.springframework.stereotype.Component;
 
 @Component
